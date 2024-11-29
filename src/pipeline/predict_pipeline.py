@@ -2,6 +2,7 @@ import sys
 import pandas as pd
 import os 
 
+from logger import logging
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent)) # In case there is an error when importing logger and exception below
 from exception import CustomException
@@ -15,11 +16,18 @@ class PredictPipeline:
         try:
             model_path=os.path.join("artifacts","model.pkl")
             preprocessor_path=os.path.join('artifacts','preprocessor.pkl')
-            print("Before Loading")
+            
+            logging.info(f"Loading model from {model_path}")
             model=load_object(file_path=model_path)
+
+            logging.info(f"Loading preprocessor from {preprocessor_path}")
             preprocessor=load_object(file_path=preprocessor_path)
-            print("After Loading")
+
+
+            logging.info("Transforming input features")
             data_scaled=preprocessor.transform(features)
+
+            logging.info("Generating predictions")  
             preds=model.predict(data_scaled)
             return preds
         
